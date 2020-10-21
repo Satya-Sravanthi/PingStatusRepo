@@ -1,0 +1,1 @@
+INSERT INTO CONFIGURATION values(1,'idleTimeOutThresholdLimit', 10000);
