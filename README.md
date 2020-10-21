@@ -3,7 +3,7 @@
 This repository contains changes related to ping status application where the client keeps sending the requests to the server.
 If the client does not respond within the threshold limit the server identifies those clients and add the details to a log file 
 
-Assumptions:
+# Assumptions:
 1.	Every client makes at least one request to the server as soon as they come online
 2.	The threshold limit is common across all the clients 
 3.	The framework through which the client reaches the server is through the rest API
@@ -15,7 +15,7 @@ Assumptions:
 9.	Assuming the timeout files will be written locally and moved to a centralized location. For the demo purpose used the filename where the application is hosted 
 
 
-Key Components:
+# Key Components:
 With the above assumptions below is the layering of the different services within Application.
 1.	PingService – Service to process the incoming  ping  request and updates in the database
 2.	PingEndpoint - Rest API component which exposes ping endpoint call for the clients to interact with the server.
