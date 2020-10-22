@@ -52,7 +52,7 @@ public class PingHistoryEntity {
 
 	@Override
 	public String toString() {
-		return "ClientLogEntity [id=" + id + ", clientId=" + clientId + ", pingTimeStamp=" + pingTimeStamp + "]";
+		return "PingHistoryEntity [id=" + id + ", clientId=" + clientId + ", pingTimeStamp=" + pingTimeStamp + "]";
 	}
 
 }

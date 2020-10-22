@@ -31,36 +31,48 @@ public class DBEntityManager {
 	@Autowired
 	ConfigurationDatabaseRepository configurationDatabaseRepository;
 
-	public void savePingDetails(PingEntity clientLogEntry) {
+	/**
+	 * Method to update the ping details to the repository. The method update the
+	 * details to the active table and history table
+	 *
+	 * @param pingEntity - PingEntity object
+	 */
+	public void saveOrUpdate(PingEntity pingEntity) {
 
-		PingEntity entity = pingDatabaseRepository.findByClientId(clientLogEntry.getClientId());
+		PingEntity entity = pingDatabaseRepository.findByClientId(pingEntity.getClientId());
 		if (entity != null) {
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("updating the existing record for the client Id ::" + clientLogEntry.getClientId());
+				LOGGER.debug("updating the existing record for the client Id ::" + pingEntity.getClientId());
 			}
-			pingDatabaseRepository.updateLogEntry(clientLogEntry.getPingTimeStamp(), clientLogEntry.getClientId());
+			pingDatabaseRepository.updateLogEntry(pingEntity.getPingTimeStamp(), pingEntity.getClientId());
 		} else {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Adding new record for the client Id ::" + clientLogEntry.getClientId());
+				LOGGER.debug("Adding new record for the client Id ::" + pingEntity.getClientId());
 			}
-			pingDatabaseRepository.save(clientLogEntry);
+			pingDatabaseRepository.save(pingEntity);
 		}
 		PingHistoryEntity pingHistoryEntity = new PingHistoryEntity();
-		pingHistoryEntity.setClientId(clientLogEntry.getClientId());
-		pingHistoryEntity.setPingTimeStamp(clientLogEntry.getPingTimeStamp());
+		pingHistoryEntity.setClientId(pingEntity.getClientId());
+		pingHistoryEntity.setPingTimeStamp(pingEntity.getPingTimeStamp());
 		pingHistoryDatabaseRepository.save(pingHistoryEntity);
 	}
 
-	public void updatePingDetails(PingEntity clientLogEntry) {
-		pingDatabaseRepository.updateLogEntry(clientLogEntry.getPingTimeStamp(), clientLogEntry.getClientId());
-	}
-
+	/**
+	 * Method to fetch all the recent ping details of every client
+	 * 
+	 * @return - list of ping entity details
+	 */
 	public List<PingEntity> findAllLatestPingDetails() {
 		return pingDatabaseRepository.findAll();
 	}
 
-	public Iterable<ConfigurationEntity> getConfigurations() {
+	/**
+	 * Method to fetch the configurations
+	 * 
+	 * @return - list of configuration details
+	 */
+	public List<ConfigurationEntity> getConfigurations() {
 		return configurationDatabaseRepository.findAll();
 	}
 }

@@ -32,18 +32,9 @@ public class PingManager {
 		clientLogEntry.setClientId(pingRequest.getClientId());
 		long timestamp = System.currentTimeMillis();
 		clientLogEntry.setPingTimeStamp(timestamp);
-		dBEntityManager.savePingDetails(clientLogEntry);
+		dBEntityManager.saveOrUpdate(clientLogEntry);
 		return PingConstants.SUCCESS;
 
 	}
 
-	public int update(PingRequest pingRequest) throws PingException {
-		PingEntity clientLogEntry = new PingEntity();
-		clientLogEntry.setClientId(pingRequest.getClientId());
-		long timestamp = System.currentTimeMillis();
-		clientLogEntry.setPingTimeStamp(timestamp);
-		dBEntityManager.updatePingDetails(clientLogEntry);
-		return PingConstants.SUCCESS;
-
-	}
 }

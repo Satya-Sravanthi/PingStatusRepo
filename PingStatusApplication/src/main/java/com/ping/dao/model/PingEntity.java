@@ -2,10 +2,7 @@ package com.ping.dao.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 
 /**
@@ -18,9 +15,6 @@ import javax.persistence.Table;
 public class PingEntity {
 
 	@Id
-	 @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-
 	@Column(name = "CLIENT_ID")
 	private String clientId;
 
@@ -35,14 +29,6 @@ public class PingEntity {
 		return pingTimeStamp;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	public String getClientId() {
 		return clientId;
 	}
@@ -53,7 +39,7 @@ public class PingEntity {
 
 	@Override
 	public String toString() {
-		return "ClientLogEntity [id=" + id + ", clientId=" + clientId + ", pingTimeStamp=" + pingTimeStamp + "]";
+		return "PingEntity [clientId=" + clientId + ", pingTimeStamp=" + pingTimeStamp + "]";
 	}
 
 }

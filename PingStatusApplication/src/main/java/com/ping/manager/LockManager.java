@@ -16,13 +16,16 @@ public class LockManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LockManager.class);
 
 	/**
-	 * Method to acquire lock
+	 * Method to acquire the lock
+	 * 
+	 * @return - Returns true if the lock is acquired or else false
 	 */
-	public void lock() {
+	public boolean lock() {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("acquiring lock");
 		}
 
+		return true;
 	}
 
 	/**

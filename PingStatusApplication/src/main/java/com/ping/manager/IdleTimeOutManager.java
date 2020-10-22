@@ -1,8 +1,8 @@
 package com.ping.manager;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,42 +35,44 @@ public class IdleTimeOutManager {
 	LockManager lockManager;
 
 	@Autowired
-	FileManager fileManager;
+	LogProcessor logProcessor;
 
 	/**
 	 * Method to process the idle out requests
 	 */
 	@Scheduled(fixedDelayString = "${idleTimeOutJob.delay}")
 	public void processTimeOutRequest() {
-
-		List<PingEntity> timeoutRequests = new ArrayList<PingEntity>();
+		boolean lockAcquired = false;
 		long thresholdLimit = configurationManager.fetchThresholdLimit();
 		try {
-			lockManager.lock();
-			long thresholdTimestamp = System.currentTimeMillis();
+			lockAcquired = lockManager.lock();
+			if (lockAcquired) {
+				long currentTimestamp = System.currentTimeMillis();
 
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Processing the idle time out requests for thresholdTimestamp ::" + thresholdTimestamp);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug(
+							"Processing the idle time out requests for thresholdTimestamp ::" + currentTimestamp);
+				}
+
+				Collection<PingEntity> fetchAllRecords = dBEntityManager.findAllLatestPingDetails();
+				Map<String, Long> idleTimeoutClientDetails = new HashMap<String, Long>();
+				for (PingEntity client : fetchAllRecords) {
+					if ((currentTimestamp - client.getPingTimeStamp()) > thresholdLimit) {
+						idleTimeoutClientDetails.put(client.getClientId(),
+								currentTimestamp - client.getPingTimeStamp());
+
+					}
+				}
+				logProcessor.processTimeOutRequests(idleTimeoutClientDetails);
 			}
-
-			Collection<PingEntity> fetchAllRecords = dBEntityManager.findAllLatestPingDetails();
-			for (PingEntity client : fetchAllRecords) {
-				if ((thresholdTimestamp - client.getPingTimeStamp()) > thresholdLimit)
-					client.setPingTimeStamp(client.getPingTimeStamp() + thresholdLimit);
-				timeoutRequests.add(client);
-			}
-
-			if (LOGGER.isDebugEnabled()) {
-				for (PingEntity entry : timeoutRequests)
-					LOGGER.debug("ClientId:: " + entry.getClientId() + " ---TimeStamp::" + entry.getPingTimeStamp());
-			}
-
-			fileManager.processTimeOutRequests(timeoutRequests);
 		} catch (Exception e) {
 			LOGGER.error("Exception while processing the idleTimeOut requests", e);
 
 		} finally {
-			lockManager.unlock();
+			// If the lock has been acquired release the lock in the final block
+			if (lockAcquired) {
+				lockManager.unlock();
+			}
 		}
 
 	}
